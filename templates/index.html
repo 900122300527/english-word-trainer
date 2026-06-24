@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>English Word Trainer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>Тренировка слов</h1>
+      <p>Всего слов: <b id="total">{{ total }}</b>. Выучено: <b id="known">{{ known }}</b>.</p>
+    </div>
+    <button class="secondary" onclick="openAdd()">+ Добавить слово</button>
+  </header>
+
+  <section class="filters">
+    <label for="groupFilter">Группа слов:</label>
+    <select id="groupFilter" onchange="changeGroup()">
+      <option value="all">Все слова</option>
+      {% for g in groups %}
+        <option value="{{ g.id }}">{{ g.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="secondary" onclick="openGroup()">+ Добавить группу</button>
+  </section>
+
+  <main class="card">
+    <div id="wordId" hidden></div>
+    <div id="wordGroup" class="group-badge"></div>
+    <h2 id="word">loading...</h2>
+    <div id="transcription" class="transcription"></div>
+    <div class="voice-row">
+      <label for="voice">Голос:</label>
+      <select id="voice">
+        {% for key, title in voices.items() %}
+          <option value="{{ key }}" {% if key == default_voice %}selected{% endif %}>{{ key }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="playWord()">▶ Play</button>
+      <button class="secondary" onclick="toggleTranslation()">Показать перевод</button>
+      <button class="secondary" onclick="loadRandom()">Next</button>
+    </div>
+    <div id="translation" class="translation hidden"></div>
+    <div class="buttons small-gap">
+      <button class="good" onclick="markWord('known')">Знаю</button>
+      <button class="bad" onclick="markWord('unknown')">Не знаю</button>
+    </div>
+    <div id="status" class="status"></div>
+    <audio id="player" controls hidden></audio>
+  </main>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h3>Мои слова</h3>
+      <button class="secondary" onclick="loadWords()">Обновить список</button>
+    </div>
+    <div id="wordsList" class="words-list"></div>
+  </section>
+</div>
+
+<div id="addModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Добавить слово</h3>
+    <input id="newWord" placeholder="word, например early">
+    <input id="newTranscription" placeholder="транскрипция, можно пусто">
+    <input id="newTranslation" placeholder="перевод">
+    <label class="field-label" for="newGroupSelect">Группа:</label>
+    <select id="newGroupSelect"></select>
+    <input id="newGroupName" placeholder="или новая группа, например Еда">
+    <div class="buttons">
+      <button class="primary" onclick="addWord()">Сохранить</button>
+      <button class="secondary" onclick="closeAdd()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div id="groupModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Добавить группу</h3>
+    <input id="groupName" placeholder="например Дни недели, Еда, Глаголы">
+    <div class="buttons">
+      <button class="primary" onclick="addGroup()">Сохранить</button>
+      <button class="secondary" onclick="closeGroup()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
